@@ -9,7 +9,8 @@ setup(
     author="",
     author_email="",
     url="https://github.com/user/project",
-    install_requires=["lightning", "hydra-core"],
+    python_requires=">=3.10",
+    install_requires=["lightning>=2.5.5", "hydra-core>=1.3"],
     packages=find_packages(),
     # use this to customize global commands available in the terminal after installing the package
     entry_points={
