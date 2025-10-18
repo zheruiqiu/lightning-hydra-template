@@ -5,6 +5,7 @@ import lightning as L
 import rootutils
 import torch
 from lightning import Callback, LightningDataModule, LightningModule, Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 
@@ -90,10 +91,17 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     if cfg.get("test"):
         log.info("Starting testing!")
-        ckpt_path = trainer.checkpoint_callback.best_model_path
+        # Find ModelCheckpoint callback to get best model path
+        ckpt_path = None
+        for callback in trainer.callbacks:
+            if isinstance(callback, ModelCheckpoint):
+                ckpt_path = callback.best_model_path
+                break
+        
         if ckpt_path == "":
             log.warning("Best ckpt not found! Using current weights for testing...")
             ckpt_path = None
+        
         trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
         log.info(f"Best ckpt path: {ckpt_path}")
 

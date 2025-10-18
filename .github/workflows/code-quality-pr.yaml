@@ -16,21 +16,23 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
-
-      - name: Find modified files
-        id: file_changes
-        uses: trilom/file-changes-action@v1.2.4
+        uses: actions/setup-python@v5
         with:
-          output: " "
+          python-version: "3.12"
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          separator: " "
 
       - name: List modified files
-        run: echo '${{ steps.file_changes.outputs.files}}'
+        run: echo '${{ steps.changed-files.outputs.all_changed_files }}'
 
       - name: Run pre-commits
-        uses: pre-commit/action@v2.0.3
+        uses: pre-commit/action@v3.0.1
         with:
-          extra_args: --files ${{ steps.file_changes.outputs.files}}
+          extra_args: --files ${{ steps.changed-files.outputs.all_changed_files }}
